@@ -1,17 +1,17 @@
 (function () {
-	/*let comments = {
-		'commentID1': {
-			threadID: 'thread1',
-			commentBy: {
-				name: 'Vikas Verma',
-				handle: 'audrey1',
-				avatar: ''
-			},
-			timeStamp: '1532873210544',
-			likes: 4,
-			dislikes: 2,
-			content: 'This is my first comment.'
-		},
+    /*let comments = {
+        'commentID1': {
+            threadID: 'thread1',
+            commentBy: {
+                name: 'Vikas Verma',
+                handle: 'audrey1',
+                avatar: ''
+            },
+            timeStamp: '1532873210544',
+            likes: 4,
+            dislikes: 2,
+            content: 'This is my first comment.'
+        },
         'commentID2': {
             threadID: 'thread1',
             commentBy: {
@@ -60,46 +60,49 @@
             dislikes: 1,
             content: 'This is my first comment.'
         }
-	};
+    };
 
-	let commentsThread1 = {
-		id: 'thread1',
-		commentStructure: {
-		    'commentID1': {
-		        'commentID2': {
+    let commentsThread1 = {
+        id: 'thread1',
+        commentStructure: {
+            'commentID1': {
+                'commentID2': {
                     'commentID3': {},
                 },
                 'commentID4': {},
                 'commentID5': {},
             }
         }
-	};*/
+    };*/
 
-	function Comments (id) {
-		this.id = id;
-		this.keyLSDataComments = 'dataComments_' + id;
-		this.keyLSDataThread = 'dataThread_' + id;
+    function Comments(id) {
+        this.id = id;
+        this.keyLSDataComments = 'dataComments_' + id;
+        this.keyLSDataThread = 'dataThread_' + id;
 
-		this.dataComments = JSON.parse(localStorage.getItem(this.keyLSDataComments)  || '{}');
-		this.dataThread = JSON.parse(localStorage.getItem(this.keyLSDataThread)  || JSON.stringify({id:  id , commentStructure: {}}));
-		this.init = function () {
-			this.insertStartCommenting();
-			this.insertCommentData();
+        this.dataComments = JSON.parse(localStorage.getItem(this.keyLSDataComments) || '{}');
+        this.dataThread = JSON.parse(localStorage.getItem(this.keyLSDataThread) || JSON.stringify({
+            id: id,
+            commentStructure: {}
+        }));
+        this.init = function () {
+            this.insertStartCommenting();
+            this.insertCommentData();
         }
-	}
+    }
 
-	Comments.prototype.removeCommentsNode = function () {
-	    const elem = document.getElementById(this.id).getElementsByClassName('data-comments')[0];
+    Comments.prototype.removeCommentsNode = function () {
+        const elem = document.getElementById(this.id).getElementsByClassName('data-comments')[0];
         elem.parentNode.removeChild(elem);
     };
 
-	Comments.prototype.updateLS = function () {
+    Comments.prototype.updateLS = function () {
         localStorage.setItem(this.keyLSDataComments, JSON.stringify(this.dataComments));
         localStorage.setItem(this.keyLSDataThread, JSON.stringify(this.dataThread));
     };
 
-	Comments.prototype.insertCommentBox = function(locator) {
-	    const scope = this;
+    Comments.prototype.insertCommentBox = function (locator) {
+        const scope = this;
         const inputName = document.createElement('input');
         const inputUsername = document.createElement('input');
         const submitCommentBtn = document.createElement('button');
@@ -180,10 +183,10 @@
         inputCommentBox.appendChild(inputCommentBoxActions);
 
         return inputCommentBox;
-	};
+    };
 
     Comments.prototype.insertStartCommenting = function () {
-    	const threadElem = document.getElementById(this.id);
+        const threadElem = document.getElementById(this.id);
         const startComments = document.createElement("div");
 
         startComments.className = 'start-comments';
@@ -192,7 +195,7 @@
     };
 
     Comments.prototype.generateCommentWrapper = function () {
-    	const scope = this;
+        const scope = this;
         let curCommentStructure = this.dataThread['commentStructure'];
         let locatorArr = [];
 
@@ -200,22 +203,23 @@
         dataComments.className = 'data-comments';
 
         const curTimeInSecs = new Date().getTime();
+
         function getMoments(ts) {
             let timeDifference = curTimeInSecs - parseInt(ts, 10);
             if (timeDifference < 60000) {
                 return 'a few seconds ago'
             } else if (60000 <= timeDifference && timeDifference < 3600000) {
-                return Math.floor(timeDifference/60000) + ' minutes ago'
-            } else if (3600000 <= timeDifference && timeDifference < 3600000*24) {
-                return Math.floor(timeDifference/3600000) + ' hours ago'
+                return Math.floor(timeDifference / 60000) + ' minutes ago'
+            } else if (3600000 <= timeDifference && timeDifference < 3600000 * 24) {
+                return Math.floor(timeDifference / 3600000) + ' hours ago'
             } else {
-                return Math.floor(timeDifference/(3600000*24)) + ' days ago'
+                return Math.floor(timeDifference / (3600000 * 24)) + ' days ago'
             }
         }
 
         function isEmpty(obj) {
-            for(let key in obj) {
-                if(obj.hasOwnProperty(key)){
+            for (let key in obj) {
+                if (obj.hasOwnProperty(key)) {
                     return false;
                 }
             }
@@ -226,12 +230,12 @@
             let commentData = {};
 
             for (let key in tcs) {
-            	let commentID = key;
-            	if (scope.dataComments.hasOwnProperty(commentID)) {
+                let commentID = key;
+                if (scope.dataComments.hasOwnProperty(commentID)) {
                     commentData = scope.dataComments[commentID];
-				} else {
-            		continue;
-				}
+                } else {
+                    continue;
+                }
 
                 locatorArr.push(commentID);
                 const commentChildren = document.createElement('div');
@@ -249,8 +253,8 @@
                 btnUpvote.innerText = commentData['likes'];
                 btnUpvote.dataset.commentId = commentID;
                 btnUpvote.addEventListener('click', function (e) {
-                	const cID = e.target.dataset.commentId;
-                	scope.dataComments[cID]['likes'] += 1;
+                    const cID = e.target.dataset.commentId;
+                    scope.dataComments[cID]['likes'] += 1;
                     e.target.innerText = scope.dataComments[cID]['likes'];
                     scope.updateLS();
                 });
@@ -333,7 +337,7 @@
 
                 if (tcs[commentID] && !isEmpty(tcs[commentID])) {
                     appendChildren(tcs[commentID], commentChildren);
-				}
+                }
                 locatorArr.pop();
             }
         }
@@ -350,7 +354,7 @@
         threadElem.appendChild(dataComments);
     };
 
-	const commentThread1 = new Comments('thread1');
+    const commentThread1 = new Comments('thread1');
     commentThread1.init();
 
 
